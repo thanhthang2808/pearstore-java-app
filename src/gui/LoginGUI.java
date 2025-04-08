@@ -83,6 +83,9 @@ public class LoginGUI extends JFrame implements ActionListener {
         btnLogin.addActionListener(this);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
+        txtUsername.addActionListener(this);
+        txtPassword.addActionListener(this);
+
         // Message Label
         lblMessage = new JLabel("");
         lblMessage.setForeground(Color.RED);
@@ -95,7 +98,7 @@ public class LoginGUI extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnLogin) {
+        if (e.getSource() == btnLogin || e.getSource() == txtUsername || e.getSource() == txtPassword) {
             String username = txtUsername.getText();
             String password = new String(txtPassword.getPassword());
 

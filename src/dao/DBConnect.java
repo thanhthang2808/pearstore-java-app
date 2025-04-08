@@ -49,6 +49,7 @@ public class DBConnect {
 
     private static void createTablesIfNotExists() {
         try (Statement statement = connection.createStatement()) {
+            // Tạo bảng NhanVien
             String createNhanVienTableSQL = "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'NhanVien') "
                     +
                     "CREATE TABLE NhanVien (" +
@@ -58,8 +59,8 @@ public class DBConnect {
                     "    DiaChi NVARCHAR(255)" +
                     ");";
             statement.executeUpdate(createNhanVienTableSQL);
-            System.out.println("Bảng NhanVien đã được tạo (nếu chưa tồn tại).");
 
+            // Tao bảng TaiKhoan
             String createTaiKhoanTableSQL = "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'TaiKhoan') "
                     +
                     "CREATE TABLE TaiKhoan (" +
@@ -69,7 +70,17 @@ public class DBConnect {
                     "    FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV)" +
                     ");";
             statement.executeUpdate(createTaiKhoanTableSQL);
-            System.out.println("Bảng TaiKhoan đã được tạo (nếu chưa tồn tại).");
+
+            // Tạo bảng SanPham
+            String createSanPhamTableSQL = "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'SanPham') "
+                    +
+                    "CREATE TABLE SanPham (" +
+                    "    MaSP INT PRIMARY KEY IDENTITY(1,1)," +
+                    "    TenSP NVARCHAR(100) NOT NULL," +
+                    "    Gia DECIMAL(18, 2) NOT NULL," +
+                    "    SoLuong INT NOT NULL" +
+                    ");";
+            statement.executeUpdate(createSanPhamTableSQL);
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi tạo bảng: " + e.getMessage());
