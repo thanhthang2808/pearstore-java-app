@@ -76,6 +76,12 @@ public class HomePageGUI extends JFrame {
         sellButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         JButton productButton = createMenuButton("Quản lý sản phẩm", "/icons/box.png");
         productButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        JButton historyButton = createMenuButton("Lịch sử bán hàng", "/icons/history.png");
+        historyButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        leftMenuPanel.add(historyButton);
+        historyButton.addActionListener(e -> showPanel("Lịch sử bán hàng"));
+
         JButton accountButton = createMenuButton("Tài khoản", "/icons/account.png");
         accountButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         JButton logoutButton = createMenuButton("Đăng xuất", "/icons/logout.png");
@@ -106,10 +112,13 @@ public class HomePageGUI extends JFrame {
         contentPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         contentPanel.add(createPlaceholderPanel("Trang chủ"), "Trang chủ");
-        contentPanel.add(createPlaceholderPanel("Bán hàng"), "Bán hàng");
+        contentPanel.add(new BanHangGUI(taiKhoanDangNhap), "Bán hàng");
 
         quanLySanPhamGUI = new QuanLySanPhamGUI();
         contentPanel.add(quanLySanPhamGUI, "Quản lý sản phẩm");
+
+        contentPanel.add(new LichSuBanHangGUI(), "Lịch sử bán hàng");
+
 
         contentPanel.add(createTaiKhoanPanel(), "Tài khoản");
 

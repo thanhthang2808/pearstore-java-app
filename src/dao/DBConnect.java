@@ -82,6 +82,33 @@ public class DBConnect {
                     ");";
             statement.executeUpdate(createSanPhamTableSQL);
 
+            //Tạo bảng HoaDon
+            String createHoaDonTableSQL = "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='HoaDon' AND xtype='U')\n" +
+                "BEGIN\n" +
+                "   CREATE TABLE HoaDon (\n" +
+                "       MaHD INT IDENTITY(1,1) PRIMARY KEY,\n" +
+                "       NgayLap DATETIME,\n" +
+                "       TenNhanVien NVARCHAR(100),\n" +
+                "       TongTien FLOAT\n" +
+                "   )\n" +
+                "END";
+            statement.executeUpdate(createHoaDonTableSQL);
+           
+            //Tạo bảng ChiTietHoaDon
+            String createChiTietHoaDonSQL = "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ChiTietHoaDon' AND xtype='U')\n" +
+            "BEGIN\n" +
+            "    CREATE TABLE ChiTietHoaDon (\n" +
+            "        MaCTHD INT IDENTITY(1,1) PRIMARY KEY,\n" +
+            "        MaHD INT FOREIGN KEY REFERENCES HoaDon(MaHD),\n" +
+            "        MaSP INT,\n" +
+            "        TenSP NVARCHAR(100),\n" +
+            "        SoLuong INT,\n" +
+            "        DonGia FLOAT,\n" +
+            "        ThanhTien FLOAT\n" +
+            "    )\n" +
+            "END";
+            statement.executeUpdate(createChiTietHoaDonSQL);
+
         } catch (SQLException e) {
             System.err.println("Lỗi khi tạo bảng: " + e.getMessage());
             e.printStackTrace();

@@ -51,6 +51,8 @@ public class QuanLySanPhamGUI extends JPanel implements ActionListener {
         sanPhamTable = new JTable(tableModel);
         JScrollPane tableScrollPane = new JScrollPane(sanPhamTable);
         mainPanel.add(tableScrollPane, BorderLayout.CENTER);
+    
+        
 
         // Form nhập liệu và nút chức năng
         JPanel inputPanel = new JPanel(new GridBagLayout());
