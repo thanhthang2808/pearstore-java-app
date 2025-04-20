@@ -1,8 +1,12 @@
 package entity;
 
+import java.sql.Date;
+
 public class NhanVien {
-    private int maNV;
+    private String maNV;
     private String tenNV;
+    private Date ngaySinh;
+    private boolean gioiTinh;
     private String soDienThoai;
     private String diaChi;
     private TaiKhoan taiKhoan;
@@ -10,19 +14,26 @@ public class NhanVien {
     public NhanVien() {
     }
 
-    public NhanVien(int maNV, String tenNV, String soDienThoai, String diaChi, TaiKhoan taiKhoan) {
+    
+
+    public NhanVien(String maNV, String tenNV, Date ngaySinh, boolean gioiTinh, String soDienThoai, String diaChi,
+            TaiKhoan taiKhoan) {
         this.maNV = maNV;
         this.tenNV = tenNV;
+        this.ngaySinh = ngaySinh;
+        this.gioiTinh = gioiTinh;
         this.soDienThoai = soDienThoai;
         this.diaChi = diaChi;
         this.taiKhoan = taiKhoan;
     }
 
-    public int getMaNV() {
+
+
+    public String getMaNV() {
         return maNV;
     }
 
-    public void setMaNV(int maNV) {
+    public void setMaNV(String maNV) {
         this.maNV = maNV;
     }
 
@@ -32,6 +43,22 @@ public class NhanVien {
 
     public void setTenNV(String tenNV) {
         this.tenNV = tenNV;
+    }
+
+    public Date getNgaySinh() {
+        return ngaySinh;
+    }
+
+    public void setNgaySinh(Date ngaySinh) {
+        this.ngaySinh = ngaySinh;
+    }
+
+    public boolean isGioiTinh() {
+        return gioiTinh;
+    }
+
+    public void setGioiTinh(boolean gioiTinh) {
+        this.gioiTinh = gioiTinh;
     }
 
     public String getSoDienThoai() {
@@ -58,14 +85,12 @@ public class NhanVien {
         this.taiKhoan = taiKhoan;
     }
 
+
+
     @Override
     public String toString() {
-        return "NhanVien{" +
-                "maNV=" + maNV +
-                ", tenNV='" + tenNV + '\'' +
-                ", soDienThoai='" + soDienThoai + '\'' +
-                ", diaChi='" + diaChi + '\'' +
-                ", taiKhoan=" + taiKhoan +
-                '}';
+        return "NhanVien [maNV=" + maNV + ", tenNV=" + tenNV + ", ngaySinh=" + ngaySinh + ", gioiTinh=" + gioiTinh
+                + ", soDienThoai=" + soDienThoai + ", diaChi=" + diaChi + ", taiKhoan=" + taiKhoan + "]";
     }
+    
 }

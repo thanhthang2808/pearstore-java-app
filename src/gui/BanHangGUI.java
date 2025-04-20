@@ -77,7 +77,7 @@ public class BanHangGUI extends JPanel {
                 int maSP = Integer.parseInt(maSPStr);
                 SanPham sp = sanPhamBUS.getSanPhamById(maSP);
                 if (sp != null) {
-                    int soLuong = 1;
+                    int soLuong = 0;
                     double thanhTien = sp.getGia() * soLuong;
 
                     Object[] row = {
@@ -90,8 +90,10 @@ public class BanHangGUI extends JPanel {
                     tableModel.addRow(row);
                     updateTongTien();
                     txtMaSP.setText("");
-                } else {
+                }
+                 else {
                     JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Mã sản phẩm phải là số!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -124,18 +126,12 @@ public class BanHangGUI extends JPanel {
                     SanPham sp = sanPhamBUS.getSanPhamById(maSP);
                     if (soLuongMoi > sp.getSoLuong()) {
                         JOptionPane.showMessageDialog(this,
-                                "Số lượng vượt quá tồn kho! Tồn kho: " + sp.getSoLuong(),
+                                "Sản phẩm đã hết hàng! Tồn kho: " + sp.getSoLuong(),
                                 "Lỗi", JOptionPane.ERROR_MESSAGE);
                         // Quay lại số lượng cũ là 1
-                        tableModel.setValueAt(1, row, 2);
+                        tableModel.setValueAt(0, row, 2);
                         tableModel.setValueAt(sp.getGia(), row, 4);
-                    }
-                    else if (soLuongMoi<=0){
-                        JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0");
-                        tableModel.setValueAt(1, row, 2);
-                        tableModel.setValueAt(sp.getGia(), row, 4);
-                    } 
-                    else {
+                    } else {
                         double donGia = Double.parseDouble(tableModel.getValueAt(row, 3).toString());
                         tableModel.setValueAt(soLuongMoi * donGia, row, 4);
                     }
@@ -146,6 +142,7 @@ public class BanHangGUI extends JPanel {
                 }
             }
         });
+        
         
     }
 

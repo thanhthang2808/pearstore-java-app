@@ -11,7 +11,6 @@ public class TaiKhoan {
     public TaiKhoan(String tenDangNhap, String matKhau, int maNV) {
         this.tenDangNhap = tenDangNhap;
         this.matKhau = matKhau;
-        this.maNV = maNV;
     }
 
     public String getTenDangNhap() {

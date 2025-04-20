@@ -12,23 +12,20 @@ public class DBConnect {
     private static final String DB_PASSWORD = "123456";
 
     public static Connection getConnection() {
-        if (connection == null) {
-            synchronized (DBConnect.class) {
-                if (connection == null) {
-                    try {
+        try {
+            if (connection == null || connection.isClosed()) {
+                synchronized (DBConnect.class) {
+                    if (connection == null || connection.isClosed()) {
                         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
                         connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-                        System.out.println("Connected to SQL Server successfully!");
+                        System.out.println("Kết nối đến sql server thành công");
                         createTablesIfNotExists();
-                    } catch (ClassNotFoundException e) {
-                        System.err.println("SQL Server JDBC driver not found!");
-                        e.printStackTrace();
-                    } catch (SQLException e) {
-                        System.err.println("Failed to connect to SQL Server!");
-                        e.printStackTrace();
                     }
                 }
             }
+        } catch (Exception e) {
+            System.err.println("Không thể kết nối SQL Server: " + e.getMessage());
+            e.printStackTrace();
         }
         return connection;
     }
