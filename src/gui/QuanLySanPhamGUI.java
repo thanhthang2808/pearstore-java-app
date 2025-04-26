@@ -1,6 +1,7 @@
 package gui;
 
 import bus.SanPhamBUS;
+import entity.NhanVien;
 import entity.SanPham;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -236,6 +237,7 @@ public class QuanLySanPhamGUI extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Mã sản phẩm phải là số nguyên!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         } else if (e.getSource() == btnXoa) {
+           
             String maSPStr = txtMaSPCUD.getText();
             try {
                 int maSP = Integer.parseInt(maSPStr);
