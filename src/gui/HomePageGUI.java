@@ -1,6 +1,7 @@
 package gui;
 
 import bus.TaiKhoanBUS;
+import entity.ChucVu;
 import entity.TaiKhoan;
 
 import javax.swing.*;
@@ -262,7 +263,7 @@ public class HomePageGUI extends JFrame {
 
     public static void main(String[] args) {
         // Dummy TaiKhoan for testing HomePageGUI directly
-        TaiKhoan dummyTaiKhoan = new TaiKhoan("testuser", "password", 1);
+        TaiKhoan dummyTaiKhoan = new TaiKhoan("testuser", "password", 1, ChucVu.QUAN_LY);
         SwingUtilities.invokeLater(() -> new HomePageGUI(dummyTaiKhoan));
     }
 }

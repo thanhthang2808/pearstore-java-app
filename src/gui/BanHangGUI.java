@@ -169,10 +169,10 @@ public class BanHangGUI extends JPanel {
     private void xuatHoaDon() {
         StringBuilder hoaDon = new StringBuilder();
 
-        hoaDon.append("========== HÓA ĐƠN BÁN HÀNG ==========\n");
+        hoaDon.append("=================== HÓA ĐƠN BÁN HÀNG ===================\n");
         hoaDon.append("Nhân viên: ").append(taiKhoanDangNhap.getTenDangNhap()).append("\n");
         hoaDon.append("Ngày: ").append(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date())).append("\n");
-        hoaDon.append("--------------------------------------\n");
+        hoaDon.append("---------------------------------------------------------\n");
         hoaDon.append(String.format("%-20s %5s %10s %12s\n", "Tên SP", "SL", "Đơn giá", "Thành tiền"));
 
         for (int i = 0; i < tableModel.getRowCount(); i++) {
@@ -184,9 +184,9 @@ public class BanHangGUI extends JPanel {
             hoaDon.append(String.format("%-20s %5d %,10.0f %,12.0f\n", tenSP, soLuong, donGia, thanhTien));
         }
 
-        hoaDon.append("--------------------------------------\n");
+        hoaDon.append("--------------------------------------------------------\n");
         hoaDon.append(lblTongTien.getText()).append("\n");
-        hoaDon.append("======================================");
+        hoaDon.append("=========================================================");
 
         JTextArea txtArea = new JTextArea(hoaDon.toString());
         txtArea.setFont(new Font("Monospaced", Font.PLAIN, 14));

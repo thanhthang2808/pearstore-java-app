@@ -24,6 +24,20 @@ public class LichSuBanHangGUI extends JPanel {
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         loadLichSuHoaDon();
+
+        
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2) { // Double-click
+                    int selectedRow = table.getSelectedRow();
+                    if (selectedRow != -1) {
+                        int maHD = (int) tableModel.getValueAt(selectedRow, 0);
+                        new HoaDonChiTietGUI((JFrame) SwingUtilities.getWindowAncestor(LichSuBanHangGUI.this), maHD);
+                    }
+                }
+            }
+        });
     }
 
     private void loadLichSuHoaDon() {
@@ -40,17 +54,5 @@ public class LichSuBanHangGUI extends JPanel {
                 String.format("%,.0f", hd.getTongTien()) + " VNĐ"
             });
         }
-    
-    table.addMouseListener(new java.awt.event.MouseAdapter() {
-        @Override
-        public void mouseClicked(java.awt.event.MouseEvent e) {
-            if (e.getClickCount() == 2) { // Double-click
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow != -1) {
-                    int maHD = (int) tableModel.getValueAt(selectedRow, 0);
-                    new HoaDonChiTietGUI((JFrame) SwingUtilities.getWindowAncestor(LichSuBanHangGUI.this), maHD);
-                }
-            }
-        }
-    });
-}}
+    }
+}

@@ -7,27 +7,23 @@ public class NhanVien {
     private String tenNV;
     private Date ngaySinh;
     private boolean gioiTinh;
+    private String email;
     private String soDienThoai;
-    private String diaChi;
     private TaiKhoan taiKhoan;
 
     public NhanVien() {
     }
 
-    
-
-    public NhanVien(String maNV, String tenNV, Date ngaySinh, boolean gioiTinh, String soDienThoai, String diaChi,
+    public NhanVien(String maNV, String tenNV, Date ngaySinh, boolean gioiTinh, String email, String soDienThoai,
             TaiKhoan taiKhoan) {
         this.maNV = maNV;
         this.tenNV = tenNV;
         this.ngaySinh = ngaySinh;
         this.gioiTinh = gioiTinh;
+        this.email = email;
         this.soDienThoai = soDienThoai;
-        this.diaChi = diaChi;
         this.taiKhoan = taiKhoan;
     }
-
-
 
     public String getMaNV() {
         return maNV;
@@ -61,20 +57,20 @@ public class NhanVien {
         this.gioiTinh = gioiTinh;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getSoDienThoai() {
         return soDienThoai;
     }
 
     public void setSoDienThoai(String soDienThoai) {
         this.soDienThoai = soDienThoai;
-    }
-
-    public String getDiaChi() {
-        return diaChi;
-    }
-
-    public void setDiaChi(String diaChi) {
-        this.diaChi = diaChi;
     }
 
     public TaiKhoan getTaiKhoan() {
@@ -85,12 +81,12 @@ public class NhanVien {
         this.taiKhoan = taiKhoan;
     }
 
-
-
     @Override
     public String toString() {
         return "NhanVien [maNV=" + maNV + ", tenNV=" + tenNV + ", ngaySinh=" + ngaySinh + ", gioiTinh=" + gioiTinh
-                + ", soDienThoai=" + soDienThoai + ", diaChi=" + diaChi + ", taiKhoan=" + taiKhoan + "]";
+                + ", email=" + email + ", soDienThoai=" + soDienThoai + ", taiKhoan=" + taiKhoan + "]";
     }
+
+    
     
 }
