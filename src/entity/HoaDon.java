@@ -1,5 +1,6 @@
 package entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class HoaDon {
@@ -28,4 +29,9 @@ public class HoaDon {
 
     public double getTongTien() { return tongTien; }
     public void setTongTien(double tongTien) { this.tongTien = tongTien; }
+
+    public String getNgayLapFormatted() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        return sdf.format(ngayLap);
+    }
 }

@@ -88,6 +88,9 @@ public class HomePageGUI extends JFrame {
         JButton logoutButton = createMenuButton("Đăng xuất", "/icons/logout.png");
         logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        JButton statisticButton = createMenuButton("Báo cáo doanh thu", "../icons/statistic.png");
+        statisticButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         homeButton.addActionListener(e -> showPanel("Trang chủ"));
         sellButton.addActionListener(e -> showPanel("Bán hàng"));
         productButton.addActionListener(e -> showPanel("Quản lý sản phẩm"));
@@ -96,10 +99,12 @@ public class HomePageGUI extends JFrame {
             new LoginGUI();
             dispose();
         });
+        statisticButton.addActionListener(e -> showPanel("Báo cáo doanh thu"));
 
         leftMenuPanel.add(homeButton);
         leftMenuPanel.add(sellButton);
         leftMenuPanel.add(productButton);
+        leftMenuPanel.add(statisticButton);
         leftMenuPanel.add(accountButton);
         leftMenuPanel.add(Box.createVerticalGlue());
         leftMenuPanel.add(logoutButton);
@@ -112,14 +117,16 @@ public class HomePageGUI extends JFrame {
         contentPanel.setBackground(secondaryColor);
         contentPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        LichSuBanHangGUI lichSuBanHangGUI = new LichSuBanHangGUI();
+        contentPanel.add(lichSuBanHangGUI, "Lịch sử bán hàng");  
         contentPanel.add(createPlaceholderPanel("Trang chủ"), "Trang chủ");
-        contentPanel.add(new BanHangGUI(taiKhoanDangNhap), "Bán hàng");
+        contentPanel.add(new BanHangGUI(taiKhoanDangNhap, lichSuBanHangGUI), "Bán hàng");
 
         quanLySanPhamGUI = new QuanLySanPhamGUI();
         contentPanel.add(quanLySanPhamGUI, "Quản lý sản phẩm");
 
-        contentPanel.add(new LichSuBanHangGUI(), "Lịch sử bán hàng");
-
+        BaoCaoDoanhThuGUI baoCaoDoanhThuGUI = new BaoCaoDoanhThuGUI(taiKhoanDangNhap.getTenDangNhap());
+        contentPanel.add(baoCaoDoanhThuGUI, "Báo cáo doanh thu");
 
         contentPanel.add(createTaiKhoanPanel(), "Tài khoản");
 

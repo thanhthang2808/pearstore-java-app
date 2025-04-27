@@ -24,7 +24,6 @@ public class LichSuBanHangGUI extends JPanel {
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         loadLichSuHoaDon();
-
         
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -40,12 +39,20 @@ public class LichSuBanHangGUI extends JPanel {
         });
     }
 
-    private void loadLichSuHoaDon() {
+    public void loadLichSuHoaDon() {
+        System.out.println("Loading data in LichSuBanHangGUI...");
         HoaDonDAO hoaDonDAO = new HoaDonDAO();
         List<HoaDon> list = hoaDonDAO.getAllHoaDon();
-        tableModel.setRowCount(0);
+    
+        if (list.isEmpty()) {
+            System.out.println("No data found in HoaDonDAO.getAllHoaDon()");
+        } else {
+            System.out.println("Data loaded: " + list.size() + " records");
+        }
+    
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
+    
         for (HoaDon hd : list) {
             tableModel.addRow(new Object[] {
                 hd.getMaHD(),
@@ -55,4 +62,9 @@ public class LichSuBanHangGUI extends JPanel {
             });
         }
     }
+
+    public void refreshLichSuHoaDon() {
+        loadLichSuHoaDon();
+    }
+    
 }

@@ -13,6 +13,7 @@ public class TaiKhoan {
         this.tenDangNhap = tenDangNhap;
         this.matKhau = matKhau;
         this.maNV = maNV;
+        this.chucVu = chucVu;
     }
 
     public String getTenDangNhap() {

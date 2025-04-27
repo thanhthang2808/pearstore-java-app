@@ -27,11 +27,14 @@ public class BanHangGUI extends JPanel {
     private JButton btnInHoaDon;
     private JLabel lblTongTien;
 
+    private LichSuBanHangGUI lichSuBanHangGUI;
     private SanPhamBUS sanPhamBUS = new SanPhamBUS();
+
     private TaiKhoan taiKhoanDangNhap;
 
-    public BanHangGUI(TaiKhoan taiKhoan) {
+    public BanHangGUI(TaiKhoan taiKhoan,LichSuBanHangGUI l) {
         this.taiKhoanDangNhap = taiKhoan;
+        this.lichSuBanHangGUI = l;
 
         setLayout(new BorderLayout());
 
@@ -225,6 +228,12 @@ public class BanHangGUI extends JPanel {
              ChiTietHoaDon ct = new ChiTietHoaDon(maHD, maSP, tenSP, soLuong, donGia, thanhTien);
              ctDAO.themChiTietHoaDon(ct);
             }
+        
+        // Gọi phương thức làm mới lịch sử bán hàng
+        if (lichSuBanHangGUI != null) {
+            lichSuBanHangGUI.refreshLichSuHoaDon();
+        } 
+
         }
         tableModel.setRowCount(0);
         updateTongTien();
