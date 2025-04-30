@@ -85,4 +85,37 @@ public class HoaDonDAO {
         return list;
     }
 
+    public double tinhTongDoanhThu(String thoiGianBatDau, String thoiGianKetThuc) {
+        double tongDoanhThu = 0;
+        String query = "SELECT SUM(TongTien) FROM HoaDon WHERE NgayLap BETWEEN ? AND ?";
+        try (Connection connection = DBConnect.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, thoiGianBatDau);
+            stmt.setString(2, thoiGianKetThuc);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                tongDoanhThu = rs.getDouble(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tongDoanhThu;
+    }
+
+    public int demSoHoaDon(String thoiGianBatDau, String thoiGianKetThuc) {
+        int soHoaDon = 0;
+        String query = "SELECT COUNT(*) FROM HoaDon WHERE NgayLap BETWEEN ? AND ?";
+        try (Connection connection = DBConnect.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, thoiGianBatDau);
+            stmt.setString(2, thoiGianKetThuc);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                soHoaDon = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return soHoaDon;
+    }
 }

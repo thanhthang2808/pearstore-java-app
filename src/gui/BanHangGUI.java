@@ -7,14 +7,10 @@ import entity.ChiTietHoaDon;
 import entity.HoaDon;
 import entity.SanPham;
 import entity.TaiKhoan;
-import dao.HoaDonDAO;
-import entity.HoaDon;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
-import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -28,13 +24,17 @@ public class BanHangGUI extends JPanel {
     private JLabel lblTongTien;
 
     private LichSuBanHangGUI lichSuBanHangGUI;
+    private QuanLySanPhamGUI quanLySanPhamGUI; // Tham chiếu đến QuanLySanPhamGUI
     private SanPhamBUS sanPhamBUS = new SanPhamBUS();
 
     private TaiKhoan taiKhoanDangNhap;
+    private DashboardPanel dashboardPanel;
 
-    public BanHangGUI(TaiKhoan taiKhoan,LichSuBanHangGUI l) {
+    public BanHangGUI(TaiKhoan taiKhoan, LichSuBanHangGUI l, QuanLySanPhamGUI qlSanPhamGUI, DashboardPanel dashboardPanel) {
         this.taiKhoanDangNhap = taiKhoan;
         this.lichSuBanHangGUI = l;
+        this.quanLySanPhamGUI = qlSanPhamGUI; // Lưu tham chiếu QuanLySanPhamGUI
+        this.dashboardPanel = dashboardPanel;
 
         setLayout(new BorderLayout());
 
@@ -93,10 +93,8 @@ public class BanHangGUI extends JPanel {
                     tableModel.addRow(row);
                     updateTongTien();
                     txtMaSP.setText("");
-                }
-                 else {
+                } else {
                     JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Mã sản phẩm phải là số!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -125,28 +123,26 @@ public class BanHangGUI extends JPanel {
                 try {
                     int soLuongMoi = Integer.parseInt(tableModel.getValueAt(row, 2).toString());
                     int maSP = Integer.parseInt(tableModel.getValueAt(row, 0).toString());
-        
+
                     SanPham sp = sanPhamBUS.getSanPhamById(maSP);
                     if (soLuongMoi > sp.getSoLuong()) {
                         JOptionPane.showMessageDialog(this,
                                 "Sản phẩm đã hết hàng! Tồn kho: " + sp.getSoLuong(),
                                 "Lỗi", JOptionPane.ERROR_MESSAGE);
-                        // Quay lại số lượng cũ là 1
+                        // Quay lại số lượng cũ là 0
                         tableModel.setValueAt(0, row, 2);
                         tableModel.setValueAt(sp.getGia(), row, 4);
                     } else {
                         double donGia = Double.parseDouble(tableModel.getValueAt(row, 3).toString());
                         tableModel.setValueAt(soLuongMoi * donGia, row, 4);
                     }
-        
+
                     updateTongTien();
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Lỗi định dạng số lượng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-        
-        
     }
 
     private void updateTongTien() {
@@ -160,14 +156,22 @@ public class BanHangGUI extends JPanel {
         }
         lblTongTien.setText("Tổng tiền: " + String.format("%,.0f", tong) + " VNĐ");
     }
+    
     private double tinhTongTien() {
         double tong = 0;
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            tong += Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+        try {
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                // Kiểm tra dữ liệu trong cột "Thành tiền" (cột thứ 4)
+                Object thanhTienObj = tableModel.getValueAt(i, 4);
+                if (thanhTienObj != null) {
+                    tong += Double.parseDouble(thanhTienObj.toString());
+                }
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Dữ liệu không hợp lệ trong bảng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
         return tong;
     }
-    
 
     private void xuatHoaDon() {
         StringBuilder hoaDon = new StringBuilder();
@@ -232,6 +236,16 @@ public class BanHangGUI extends JPanel {
         // Gọi phương thức làm mới lịch sử bán hàng
         if (lichSuBanHangGUI != null) {
             lichSuBanHangGUI.refreshLichSuHoaDon();
+
+        // Làm mới danh sách sản phẩm sau khi bán hàng
+        if (quanLySanPhamGUI != null) {
+                quanLySanPhamGUI.loadSanPham(); 
+        }
+        
+        // Làm mới dữ liệu trên DashboardPanel
+        if (dashboardPanel != null) {
+        dashboardPanel.updateDashboardData();
+        }
         } 
 
         }

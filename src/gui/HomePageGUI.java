@@ -2,6 +2,7 @@ package gui;
 
 import bus.TaiKhoanBUS;
 import entity.ChucVu;
+import entity.HoaDon;
 import entity.TaiKhoan;
 
 import javax.swing.*;
@@ -26,7 +27,8 @@ public class HomePageGUI extends JFrame {
     private JPanel contentPanel;
     private CardLayout cardLayout;
     private QuanLySanPhamGUI quanLySanPhamGUI;
-
+    private DashboardPanel dashboardPanel;
+    
     @SuppressWarnings("unused")
     public HomePageGUI(TaiKhoan taiKhoan) {
         this.taiKhoanDangNhap = taiKhoan;
@@ -88,8 +90,11 @@ public class HomePageGUI extends JFrame {
         JButton logoutButton = createMenuButton("Đăng xuất", "/icons/logout.png");
         logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton statisticButton = createMenuButton("Báo cáo doanh thu", "../icons/statistic.png");
+        JButton statisticButton = createMenuButton("Báo cáo doanh thu", "/icons/statistic.png");
         statisticButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton overviewButton = createMenuButton("Thống kê", "/icons/overview.png");
+        overviewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         homeButton.addActionListener(e -> showPanel("Trang chủ"));
         sellButton.addActionListener(e -> showPanel("Bán hàng"));
@@ -100,11 +105,13 @@ public class HomePageGUI extends JFrame {
             dispose();
         });
         statisticButton.addActionListener(e -> showPanel("Báo cáo doanh thu"));
+        overviewButton.addActionListener(e -> showPanel("Thống kê"));
 
         leftMenuPanel.add(homeButton);
         leftMenuPanel.add(sellButton);
         leftMenuPanel.add(productButton);
         leftMenuPanel.add(statisticButton);
+        leftMenuPanel.add(overviewButton);
         leftMenuPanel.add(accountButton);
         leftMenuPanel.add(Box.createVerticalGlue());
         leftMenuPanel.add(logoutButton);
@@ -119,14 +126,21 @@ public class HomePageGUI extends JFrame {
 
         LichSuBanHangGUI lichSuBanHangGUI = new LichSuBanHangGUI();
         contentPanel.add(lichSuBanHangGUI, "Lịch sử bán hàng");  
-        contentPanel.add(createPlaceholderPanel("Trang chủ"), "Trang chủ");
-        contentPanel.add(new BanHangGUI(taiKhoanDangNhap, lichSuBanHangGUI), "Bán hàng");
+
+        dashboardPanel = new DashboardPanel();
+        contentPanel.add(dashboardPanel, "Trang chủ");
+
+        BanHangGUI banHangGUI = new BanHangGUI(taiKhoanDangNhap, lichSuBanHangGUI, quanLySanPhamGUI, dashboardPanel);
+        contentPanel.add(new BanHangGUI(taiKhoanDangNhap, lichSuBanHangGUI, quanLySanPhamGUI,dashboardPanel), "Bán hàng");
 
         quanLySanPhamGUI = new QuanLySanPhamGUI();
         contentPanel.add(quanLySanPhamGUI, "Quản lý sản phẩm");
 
         BaoCaoDoanhThuGUI baoCaoDoanhThuGUI = new BaoCaoDoanhThuGUI(taiKhoanDangNhap.getTenDangNhap());
         contentPanel.add(baoCaoDoanhThuGUI, "Báo cáo doanh thu");
+
+        ThongKeGUI thongKeGUI = new ThongKeGUI(taiKhoanDangNhap);
+        contentPanel.add(thongKeGUI, "Thống kê");
 
         contentPanel.add(createTaiKhoanPanel(), "Tài khoản");
 
@@ -201,7 +215,22 @@ public class HomePageGUI extends JFrame {
     }
 
     private void showPanel(String panelName) {
+        // Làm mới dữ liệu cho từng panel cụ thể
+        if (panelName.equals("Quản lý sản phẩm")) {
+            if (quanLySanPhamGUI != null) {
+                quanLySanPhamGUI.loadSanPham(); // Làm mới dữ liệu cho Quản lý sản phẩm
+            }
+        } 
+        if (panelName.equals("Trang chủ")) {
+            if (dashboardPanel != null) {
+                dashboardPanel.updateDashboardData(); // Làm mới dữ liệu cho Dashboard
+            }
+        }
+    
+        // Hiển thị panel tương ứng
         cardLayout.show(contentPanel, panelName);
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 
     private void showDoiMatKhauDialog() {

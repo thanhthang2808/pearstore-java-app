@@ -194,7 +194,7 @@ add(inputPanel, BorderLayout.CENTER);
                                                    .sum();
 
             // Cập nhật doanh thu dự kiến trên giao diện
-            lblDoanhThuDuKien.setText(formatCurrency(doanhThuDuKienValue) + " VND");
+            lblDoanhThuDuKien.setText(formatCurrency(doanhThuDuKienValue));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                 "Đã xảy ra lỗi khi tính toán doanh thu: " + ex.getMessage(),
@@ -242,9 +242,8 @@ add(inputPanel, BorderLayout.CENTER);
             System.out.println("Chênh lệch: " + chenhLech);
 
             // Cập nhật giao diện
-            lblChenhLech.setText(formatCurrency(chenhLech) + " VND");
+            lblChenhLech.setText(formatCurrency(chenhLech));
             lblChenhLech.setForeground(chenhLech < 0 ? Color.RED : Color.GREEN);
-            txtLyDo.setEnabled(chenhLech < 0); // Bật ô nhập lý do nếu chênh lệch âm
         } catch (Exception ex) {
             // Xử lý lỗi không mong muốn
             lblChenhLech.setText("0 VND");
@@ -271,18 +270,23 @@ add(inputPanel, BorderLayout.CENTER);
 
             // Xây dựng nội dung báo cáo
             baoCao.append("=================== BÁO CÁO DOANH THU ===================\n");
+            baoCao.append("                       Pear Store\n");
+            baoCao.append("             12 Nguyễn Văn Bảo,Q.Gò Vấp,Hồ Chí Minh\n");
             baoCao.append("Nhân viên: ").append(tenNhanVien).append("\n");
             baoCao.append("Ngày: ").append(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date())).append("\n");
             baoCao.append("---------------------------------------------------------\n");
-            baoCao.append("Thời gian bắt đầu: ").append(thoiGianBatDau).append("\n");
-            baoCao.append("Thời gian kết thúc: ").append(thoiGianKetThuc).append("\n");
+            baoCao.append("                   CHI TIẾT BÁO CÁO\n");
+            baoCao.append("Thời gian bắt đầu ca: ").append(thoiGianBatDau).append("\n");
+            baoCao.append("Thời gian kết thúc ca: ").append(thoiGianKetThuc).append("\n");
             baoCao.append("Doanh thu dự kiến: ").append(doanhThuDuKien).append("\n");
-            baoCao.append("Doanh thu thực tế: ").append(doanhThuThucTe).append("\n");
+            baoCao.append("Doanh thu thực tế: ").append(doanhThuThucTe).append(" ₫\n");
             baoCao.append("Chênh lệch: ").append(chenhLech).append("\n");
             if (!lyDo.isEmpty()) {
                 baoCao.append("Lý do: ").append(lyDo).append("\n");
             }
-            baoCao.append("=========================================================");
+            baoCao.append("\n");
+            baoCao.append("=========================================================\n");
+            baoCao.append("                   Được cung cấp bởi N21\n");
 
             // Hiển thị báo cáo trong cửa sổ popup
             JTextArea txtArea = new JTextArea(baoCao.toString());
@@ -290,7 +294,7 @@ add(inputPanel, BorderLayout.CENTER);
             txtArea.setEditable(false);
 
             JScrollPane scrollPane = new JScrollPane(txtArea);
-            scrollPane.setPreferredSize(new Dimension(500, 400));
+            scrollPane.setPreferredSize(new Dimension(460, 400));
 
             JOptionPane.showMessageDialog(this, scrollPane, "Báo cáo doanh thu", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
@@ -299,6 +303,7 @@ add(inputPanel, BorderLayout.CENTER);
         }
     }
 
+    @SuppressWarnings("deprecation")
     private String formatCurrency(double amount) {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         return formatter.format(amount);
