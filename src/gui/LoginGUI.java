@@ -101,7 +101,6 @@ public class LoginGUI extends JFrame implements ActionListener {
         if (e.getSource() == btnLogin || e.getSource() == txtUsername || e.getSource() == txtPassword) {
             String username = txtUsername.getText();
             String password = new String(txtPassword.getPassword());
-
             TaiKhoan taiKhoan = taiKhoanBUS.login(username, password);
 
             if (taiKhoan != null) {
@@ -113,9 +112,5 @@ public class LoginGUI extends JFrame implements ActionListener {
                 lblMessage.setText("Tên đăng nhập hoặc mật khẩu không đúng!");
             }
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginGUI());
     }
 }

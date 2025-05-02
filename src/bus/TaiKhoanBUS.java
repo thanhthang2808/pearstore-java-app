@@ -1,6 +1,7 @@
 package bus;
 
 import dao.TaiKhoanDAO;
+import entity.ChucVu;
 import entity.TaiKhoan;
 
 public class TaiKhoanBUS {

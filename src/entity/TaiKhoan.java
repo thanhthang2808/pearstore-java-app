@@ -3,15 +3,15 @@ package entity;
 public class TaiKhoan {
     private String tenDangNhap;
     private String matKhau;
-    private int maNV;
+    private NhanVien nhanVien;
 
     public TaiKhoan() {
     }
 
-    public TaiKhoan(String tenDangNhap, String matKhau, int maNV) {
+    public TaiKhoan(String tenDangNhap, String matKhau, NhanVien nhanVien) {
         this.tenDangNhap = tenDangNhap;
         this.matKhau = matKhau;
-        this.maNV = maNV;
+        this.nhanVien = nhanVien;
     }
 
     public String getTenDangNhap() {
@@ -30,12 +30,12 @@ public class TaiKhoan {
         this.matKhau = matKhau;
     }
 
-    public int getMaNV() {
-        return maNV;
+    public NhanVien getNhanVien() {
+        return nhanVien;
     }
 
-    public void setMaNV(int maNV) {
-        this.maNV = maNV;
+    public void setNhanVien(NhanVien nhanVien) {
+        this.nhanVien = nhanVien;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class TaiKhoan {
         return "TaiKhoan{" +
                 "tenDangNhap='" + tenDangNhap + '\'' +
                 ", matKhau='" + matKhau + '\'' +
-                ", maNV=" + maNV +
+                ", nhanVien=" + (nhanVien != null ? nhanVien.getMaNV() : "null") +
                 '}';
     }
 }

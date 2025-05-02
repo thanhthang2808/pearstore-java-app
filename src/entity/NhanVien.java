@@ -1,28 +1,35 @@
 package entity;
 
+import java.sql.Date;
+
 public class NhanVien {
-    private int maNV;
+    private String maNV;
     private String tenNV;
+    private Date ngaySinh;
+    private boolean gioiTinh;
+    private String email;
     private String soDienThoai;
-    private String diaChi;
-    private TaiKhoan taiKhoan;
+    private ChucVu chucVu;
 
     public NhanVien() {
     }
 
-    public NhanVien(int maNV, String tenNV, String soDienThoai, String diaChi, TaiKhoan taiKhoan) {
+    public NhanVien(String maNV, String tenNV, Date ngaySinh, boolean gioiTinh, String email, String soDienThoai,
+            ChucVu chucVu) {
         this.maNV = maNV;
         this.tenNV = tenNV;
+        this.ngaySinh = ngaySinh;
+        this.gioiTinh = gioiTinh;
+        this.email = email;
         this.soDienThoai = soDienThoai;
-        this.diaChi = diaChi;
-        this.taiKhoan = taiKhoan;
+        this.chucVu = chucVu;
     }
 
-    public int getMaNV() {
+    public String getMaNV() {
         return maNV;
     }
 
-    public void setMaNV(int maNV) {
+    public void setMaNV(String maNV) {
         this.maNV = maNV;
     }
 
@@ -34,6 +41,30 @@ public class NhanVien {
         this.tenNV = tenNV;
     }
 
+    public Date getNgaySinh() {
+        return ngaySinh;
+    }
+
+    public void setNgaySinh(Date ngaySinh) {
+        this.ngaySinh = ngaySinh;
+    }
+
+    public boolean isGioiTinh() {
+        return gioiTinh;
+    }
+
+    public void setGioiTinh(boolean gioiTinh) {
+        this.gioiTinh = gioiTinh;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getSoDienThoai() {
         return soDienThoai;
     }
@@ -42,30 +73,18 @@ public class NhanVien {
         this.soDienThoai = soDienThoai;
     }
 
-    public String getDiaChi() {
-        return diaChi;
+    public ChucVu getChucVu() {
+        return chucVu;
     }
 
-    public void setDiaChi(String diaChi) {
-        this.diaChi = diaChi;
-    }
-
-    public TaiKhoan getTaiKhoan() {
-        return taiKhoan;
-    }
-
-    public void setTaiKhoan(TaiKhoan taiKhoan) {
-        this.taiKhoan = taiKhoan;
+    public void setChucVu(ChucVu chucVu) {
+        this.chucVu = chucVu;
     }
 
     @Override
     public String toString() {
-        return "NhanVien{" +
-                "maNV=" + maNV +
-                ", tenNV='" + tenNV + '\'' +
-                ", soDienThoai='" + soDienThoai + '\'' +
-                ", diaChi='" + diaChi + '\'' +
-                ", taiKhoan=" + taiKhoan +
-                '}';
+        return "NhanVien [maNV=" + maNV + ", tenNV=" + tenNV + ", ngaySinh=" + ngaySinh + ", gioiTinh=" + gioiTinh
+                + ", email=" + email + ", soDienThoai=" + soDienThoai + ", chucVu=" + chucVu + "]";
     }
+
 }
