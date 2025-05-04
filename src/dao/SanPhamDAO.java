@@ -23,9 +23,7 @@ public class SanPhamDAO {
         ResultSet resultSet = null;
 
         try {
-            connection = DBConnect.getConnection(); // Get connection here
-            System.out.println("Connection status: " + connection != null ? "Connected" : "Not connected");
-
+            connection = DBConnect.getConnection();
             String sql = "SELECT sp.MaSP, sp.TenSP, sp.GiaBan, sp.SoLuong, sp.MaVach, sp.HinhAnh, sp.GiaNhap, sp.DonViTinh, nh.MaNganh, nh.TenNganh, nh.MoTa "
                     + "FROM SanPham sp LEFT JOIN NganhHang nh ON sp.MaNganh = nh.MaNganh";
             preparedStatement = connection.prepareStatement(sql);
@@ -286,4 +284,5 @@ public class SanPhamDAO {
         }
         return rowsAffected > 0;
     }
+
 }

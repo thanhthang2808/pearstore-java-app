@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -301,7 +302,7 @@ public class QuanLySanPhamGUI extends JPanel implements ActionListener {
     }
 
     private void loadSanPham(List<SanPham> danhSachSanPham) {
-        sanPhamListPanel.removeAll(); // Xóa tất cả các card hiện có
+        sanPhamListPanel.removeAll();
         for (SanPham sp : danhSachSanPham) {
             JPanel cardPanel = createSanPhamCard(sp);
             sanPhamListPanel.add(cardPanel);
@@ -406,7 +407,7 @@ public class QuanLySanPhamGUI extends JPanel implements ActionListener {
         }
 
         // Label hình ảnh preview
-        JLabel lblHinhAnhPreview = new JLabel("Preview", JLabel.CENTER);
+        JLabel lblHinhAnhPreview = new JLabel("Xem trước", JLabel.CENTER);
         lblHinhAnhPreview.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         // Button chọn hình ảnh
@@ -433,23 +434,14 @@ public class QuanLySanPhamGUI extends JPanel implements ActionListener {
         btnThemSP.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Kiểm tra thông tin nhập vào
-                String maSP = txtMaSP.getText();
-                String tenSP = txtTenSP.getText();
-                BigDecimal giaBan = null;
-                BigDecimal giaNhap = null;
-                int soLuong = 0;
-                try {
-                    giaBan = new BigDecimal(txtGiaBan.getText());
-                    giaNhap = new BigDecimal(txtGiaNhap.getText());
-                    soLuong = Integer.parseInt(txtSoLuong.getText());
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(dialog, "Giá và số lượng phải là số hợp lệ!", "Lỗi",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                String donViTinh = txtDonViTinh.getText();
-                String maVach = txtMaVach.getText();
+                // Lấy thông tin nhập vào
+                String maSP = txtMaSP.getText().trim();
+                String tenSP = txtTenSP.getText().trim();
+                String giaBanStr = txtGiaBan.getText().trim();
+                String giaNhapStr = txtGiaNhap.getText().trim();
+                String soLuongStr = txtSoLuong.getText().trim();
+                String maVach = txtMaVach.getText().trim();
+                String donViTinh = txtDonViTinh.getText().trim();
                 String tenNganhHang = (String) cmbNganhHang.getSelectedItem();
                 NganhHang nganhHang = null;
                 for (NganhHang nh : danhSachNganhHang) {
@@ -459,28 +451,75 @@ public class QuanLySanPhamGUI extends JPanel implements ActionListener {
                     }
                 }
 
-                // Kiểm tra tính hợp lệ
-                if (maSP.isEmpty() || tenSP.isEmpty() || giaBan.compareTo(BigDecimal.ZERO) <= 0 || soLuong <= 0
-                        || donViTinh.isEmpty() || nganhHang == null) {
-                    JOptionPane.showMessageDialog(dialog, "Vui lòng nhập đầy đủ thông tin hợp lệ!", "Lỗi",
+                // Kiểm tra không được rỗng
+                if (maSP.isEmpty() || tenSP.isEmpty() || giaBanStr.isEmpty() || giaNhapStr.isEmpty()
+                        || soLuongStr.isEmpty() || donViTinh.isEmpty() || nganhHang == null) {
+                    JOptionPane.showMessageDialog(dialog, "Vui lòng nhập đầy đủ thông tin!", "Lỗi",
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                // Gọi BUS để thêm sản phẩm
+                // Kiểm tra định dạng bằng Regex
+                String maSPRegex = "^SP\\d+$";
+                String tenSPRegex = "^[\\p{L}\\p{N}\\s]+$";
+                String giaRegex = "^\\d+(\\.\\d+)?$"; // Cho phép số thực
+                String maVachRegex = "^\\d{13}$";
+                String soLuongRegex = "^\\d+$";
+
+                if (!Pattern.matches(maSPRegex, maSP)) {
+                    JOptionPane.showMessageDialog(dialog,
+                            "Mã sản phẩm phải bắt đầu bằng 'SP' và theo sau là các chữ số!", "Lỗi",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (!Pattern.matches(tenSPRegex, tenSP)) {
+                    JOptionPane.showMessageDialog(dialog, "Tên sản phẩm phải là các từ cách nhau bởi khoảng trắng!",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (!Pattern.matches(giaRegex, giaBanStr)) {
+                    JOptionPane.showMessageDialog(dialog, "Giá bán phải là số hợp lệ!", "Lỗi",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (!Pattern.matches(giaRegex, giaNhapStr)) {
+                    JOptionPane.showMessageDialog(dialog, "Giá nhập phải là số hợp lệ!", "Lỗi",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (!Pattern.matches(maVachRegex, maVach)) {
+                    JOptionPane.showMessageDialog(dialog, "Mã vạch phải là dãy 13 chữ số!", "Lỗi",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (!Pattern.matches(soLuongRegex, soLuongStr)) {
+                    JOptionPane.showMessageDialog(dialog, "Số lượng phải là số nguyên hợp lệ!", "Lỗi",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                BigDecimal giaBan = new BigDecimal(giaBanStr);
+                BigDecimal giaNhap = new BigDecimal(giaNhapStr);
+                int soLuong = Integer.parseInt(soLuongStr);
+
                 boolean result = sanPhamBUS.themSanPham(maSP, tenSP, giaBan, soLuong, maVach, hinhAnhFilePath[0],
                         giaNhap, donViTinh, nganhHang);
                 if (result) {
                     JOptionPane.showMessageDialog(dialog, "Thêm sản phẩm thành công!", "Thành công",
                             JOptionPane.INFORMATION_MESSAGE);
-                    dialog.dispose(); // Đóng dialog khi thêm thành công
+                    refreshSanPhamList(); // Cập nhật danh sách sản phẩm
+                    dialog.dispose();
                 } else {
                     JOptionPane.showMessageDialog(dialog, "Thêm sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        // Thêm các thành phần vào dialog
         dialog.add(new JLabel("Mã sản phẩm:"));
         dialog.add(txtMaSP);
         dialog.add(new JLabel("Tên sản phẩm:"));
@@ -505,6 +544,11 @@ public class QuanLySanPhamGUI extends JPanel implements ActionListener {
         dialog.setSize(400, 600);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
+    }
+
+    public void refreshSanPhamList() {
+        danhSachSanPham = sanPhamBUS.getAllSanPham();
+        loadSanPham(danhSachSanPham);
     }
 
     @Override

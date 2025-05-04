@@ -5,6 +5,8 @@ import entity.NhanVien;
 
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 public class NhanVienBUS {
 
     private NhanVienDAO nhanVienDAO;
@@ -20,13 +22,8 @@ public class NhanVienBUS {
 
     // Thêm nhân viên
     public boolean themNhanVien(NhanVien nv) {
-        // Kiểm tra tính hợp lệ của dữ liệu trước khi thêm
-        if (nv.getMaNV() == null || nv.getMaNV().isEmpty()) {
-            System.err.println("❌ Mã nhân viên không hợp lệ.");
-            return false;
-        }
-        if (nv.getTenNV() == null || nv.getTenNV().isEmpty()) {
-            System.err.println("❌ Tên nhân viên không hợp lệ.");
+        if (nhanVienDAO.getNhanVienTheoMa(nv.getMaNV()) != null) {
+            JOptionPane.showMessageDialog(null, "Mã nhân viên đã tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 

@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class QuanLyNhanVienGUI extends JPanel implements ActionListener {
 
@@ -189,6 +190,37 @@ public class QuanLyNhanVienGUI extends JPanel implements ActionListener {
                 (ChucVu) cboChucVu.getSelectedItem());
     }
 
+    private boolean validateNhanVienForm() {
+        String maNV = txtMaNV.getText().trim();
+        String tenNV = txtTenNV.getText().trim();
+        String ngaySinh = txtNgaySinh.getText().trim();
+        String email = txtEmail.getText().trim();
+        String soDT = txtSoDT.getText().trim();
+
+        if (!Pattern.matches("^NV\\d{3}$", maNV)) {
+            JOptionPane.showMessageDialog(this, "Mã nhân viên phải bắt đầu bằng 'NV' và theo sau là 3 chữ số!");
+            return false;
+        }
+        if (!Pattern.matches("^[\\p{L}\\s]+$", tenNV)) {
+            JOptionPane.showMessageDialog(this,
+                    "Tên nhân viên phải là các chữ cái (bao gồm tiếng Việt có dấu) cách nhau bởi khoảng trắng!");
+            return false;
+        }
+        if (!Pattern.matches("^\\d{4}-\\d{2}-\\d{2}$", ngaySinh)) {
+            JOptionPane.showMessageDialog(this, "Ngày sinh phải có định dạng yyyy-mm-dd!");
+            return false;
+        }
+        if (!Pattern.matches("^[\\w-\\.]+@[\\w-]+(\\.[\\w-]+)*$", email)) {
+            JOptionPane.showMessageDialog(this, "Email phải có định dạng hợp lệ (ví dụ: abc@xyz.com)!");
+            return false;
+        }
+        if (!Pattern.matches("^\\d{10}$", soDT)) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại phải là dãy 10 chữ số!");
+            return false;
+        }
+        return true;
+    }
+
     private void clearForm() {
         txtMaNV.setText("");
         txtTenNV.setText("");
@@ -205,13 +237,15 @@ public class QuanLyNhanVienGUI extends JPanel implements ActionListener {
 
         if (src == btnThem) {
             try {
-                NhanVien nv = getNhanVienFromForm();
-                if (nhanVienBUS.themNhanVien(nv)) {
-                    JOptionPane.showMessageDialog(this, "Thêm thành công!");
-                    loadNhanVien();
-                    clearForm();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Thêm thất bại!");
+                if (validateNhanVienForm()) {
+                    NhanVien nv = getNhanVienFromForm();
+                    if (nhanVienBUS.themNhanVien(nv)) {
+                        JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                        loadNhanVien();
+                        clearForm();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Thêm thất bại!");
+                    }
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Vui lòng kiểm tra lại dữ liệu!");

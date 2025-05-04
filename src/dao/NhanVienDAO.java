@@ -166,4 +166,45 @@ public class NhanVienDAO {
             }
         }
     }
+
+    public NhanVien getNhanVienTheoMa(String maNV) {
+        String sql = "SELECT * FROM NhanVien WHERE MaNV = ?";
+        NhanVien nv = null;
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBConnect.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, maNV);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String tenNV = rs.getString("TenNV");
+                Date ngaySinh = rs.getDate("NgaySinh");
+                boolean gioiTinh = rs.getBoolean("GioiTinh");
+                String email = rs.getString("Email");
+                String soDT = rs.getString("SoDienThoai");
+                ChucVu chucVu = ChucVu.valueOf(rs.getString("ChucVu"));
+
+                nv = new NhanVien(maNV, tenNV, ngaySinh, gioiTinh, email, soDT, chucVu);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Lỗi lấy nhân viên theo mã: " + e.getMessage());
+        } finally {
+            // Đảm bảo đóng các tài nguyên sau khi sử dụng
+            try {
+                if (rs != null)
+                    rs.close();
+                if (ps != null)
+                    ps.close();
+            } catch (SQLException e) {
+                System.err.println("❌ Lỗi khi đóng kết nối: " + e.getMessage());
+            }
+        }
+
+        return nv;
+    }
 }

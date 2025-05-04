@@ -30,7 +30,6 @@ public class BanHangGUI extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private JTextField txtSearch;
-    private JButton btnScanQR;
     private JPanel tabContainer;
     private JPanel hoaDonCardPanel;
     private CardLayout cardLayout;
@@ -39,20 +38,27 @@ public class BanHangGUI extends JPanel {
     private final Map<String, JPanel> hoaDonPanels = new HashMap<>();
     private final Map<String, DefaultTableModel> tableModels = new HashMap<>();
     private SanPhamBUS sanPhamBUS = new SanPhamBUS();
+    private LichSuBanHangGUI lichSuBanHangGUI;
+    private QuanLySanPhamGUI quanLySanPhamGUI;
+    private DashboardPanel dashboardPanel;
 
     private JLabel lblNumberProductValue;
     private TaiKhoan taiKhoanDangNhap;
     private JTable tblChiTietHoaDon;
     private DefaultTableModel tableModel;
-    private JTextField txtVoucher, txtDiscount, txtCustomerAmount, txtChangeAmount, txtTotalAmount, txtCustomerPhone;
+    private JTextField txtTotalAmount, txtDiscount, txtCustomerAmount, txtChangeAmount, txtFinalAmount,
+            txtCustomerPhone;
+    private DecimalFormat df = new DecimalFormat("#,###");
 
-    public BanHangGUI(TaiKhoan taiKhoan) {
+    public BanHangGUI(TaiKhoan taiKhoan, LichSuBanHangGUI l, QuanLySanPhamGUI qlSanPhamGUI,
+            DashboardPanel dashboardPanel) {
         this.taiKhoanDangNhap = taiKhoan;
+        this.lichSuBanHangGUI = l;
+        this.quanLySanPhamGUI = qlSanPhamGUI;
+        this.dashboardPanel = dashboardPanel;
         setLayout(new BorderLayout());
         initCenterPanel();
         initNorthPanel();
-        // addCustomTab("Hóa đơn " + soHoaDon); // add tab đầu tiên vào đây để khởi tạo
-        // hóa đơn đầu tiên
     }
 
     private void initNorthPanel() {
@@ -63,10 +69,7 @@ public class BanHangGUI extends JPanel {
         JPanel searchPanel = new JPanel(new BorderLayout(5, 0));
         txtSearch = new JTextField();
         txtSearch.setPreferredSize(new Dimension(300, 30));
-        btnScanQR = new JButton("📷");
-        btnScanQR.setPreferredSize(new Dimension(40, 30));
         searchPanel.add(txtSearch, BorderLayout.CENTER);
-        searchPanel.add(btnScanQR, BorderLayout.EAST);
 
         // Container tab hóa đơn
         tabContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
@@ -289,29 +292,31 @@ public class BanHangGUI extends JPanel {
         // Label và ô nhập thông tin
         JLabel lblPhone = new JLabel("Số điện thoại khách hàng:");
         txtCustomerPhone = new JTextField(15);
-        JLabel lblVoucher = new JLabel("Mã Voucher:");
-        txtVoucher = new JTextField(10);
         JLabel lblNumberProduct = new JLabel("Số lượng sản phẩm:");
         lblNumberProductValue = new JLabel("0");
-        JLabel lblDiscount = new JLabel("Chiết khấu:");
-        txtDiscount = new JTextField(10);
         JLabel lblTotalAmount = new JLabel("Tổng tiền:");
         txtTotalAmount = new JTextField(10);
-        txtTotalAmount.setEditable(false); // Make it read-only
+        txtTotalAmount.setEditable(false);
+        JLabel lblDiscount = new JLabel("Chiết khấu:");
+        txtDiscount = new JTextField(10);
+        JLabel lblFinalAmount = new JLabel("Khách phải trả:");
+        txtFinalAmount = new JTextField(10);
+        txtFinalAmount.setEditable(false);
         JLabel lblCustomerAmount = new JLabel("Tiền khách đưa:");
         txtCustomerAmount = new JTextField(10);
         JLabel lblChangeAmount = new JLabel("Tiền thừa trả lại:");
         txtChangeAmount = new JTextField(10);
-        txtChangeAmount.setEditable(false); // Make it read-only
+        txtChangeAmount.setEditable(false);
 
+        txtDiscount.addActionListener(e -> calculateTotal());
         txtCustomerAmount.addActionListener(e -> calculateTotal());
 
         // Đặt các thành phần vào GridBagLayout
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        paymentPanel.add(lblPhone, gbc);
-        gbc.gridx = 1;
-        paymentPanel.add(txtCustomerPhone, gbc);
+        // gbc.gridx = 0;
+        // gbc.gridy = 0;
+        // paymentPanel.add(lblPhone, gbc);
+        // gbc.gridx = 1;
+        // paymentPanel.add(txtCustomerPhone, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -323,24 +328,31 @@ public class BanHangGUI extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
         gbc.gridy = 2;
+        paymentPanel.add(lblTotalAmount, gbc);
+        gbc.gridx = 1;
+        paymentPanel.add(txtTotalAmount, gbc);
+
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         paymentPanel.add(lblDiscount, gbc);
         gbc.gridx = 1;
         paymentPanel.add(txtDiscount, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
-        paymentPanel.add(lblTotalAmount, gbc);
+        gbc.gridy = 4;
+        paymentPanel.add(lblFinalAmount, gbc);
         gbc.gridx = 1;
-        paymentPanel.add(txtTotalAmount, gbc);
+        paymentPanel.add(txtFinalAmount, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         paymentPanel.add(lblCustomerAmount, gbc);
         gbc.gridx = 1;
         paymentPanel.add(txtCustomerAmount, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         paymentPanel.add(lblChangeAmount, gbc);
         gbc.gridx = 1;
         paymentPanel.add(txtChangeAmount, gbc);
@@ -349,7 +361,7 @@ public class BanHangGUI extends JPanel {
         JButton btnThanhToan = new JButton("Thanh toán");
         btnThanhToan.addActionListener(e -> xuatHoaDon());
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.gridwidth = 2;
         paymentPanel.add(btnThanhToan, gbc);
 
@@ -450,22 +462,17 @@ public class BanHangGUI extends JPanel {
 
         lblNumberProductValue.setText(String.valueOf(numberProduct)); // Cập nhật số lượng sản phẩm
 
+        txtTotalAmount.setText(df.format(total));
+
         double discount = 0;
-        double voucher = 0;
         try {
             discount = Double.parseDouble(txtDiscount.getText());
         } catch (NumberFormatException e) {
             // Xử lý nếu người dùng nhập không phải số
             txtDiscount.setText("0");
         }
-        try {
-            voucher = Double.parseDouble(txtVoucher.getText());
-        } catch (NumberFormatException e) {
-            // Xử lý nếu người dùng nhập không phải số
-            txtVoucher.setText("0");
-        }
-        double finalTotal = total - discount - voucher;
-        txtTotalAmount.setText(String.format("%.2f", finalTotal));
+        double finalTotal = total - discount;
+        txtFinalAmount.setText(df.format(finalTotal));
 
         double customerAmount = 0;
         try {
@@ -477,19 +484,19 @@ public class BanHangGUI extends JPanel {
             txtChangeAmount.setText("0");
         } else {
             double change = customerAmount - finalTotal;
-            txtChangeAmount.setText(String.format("%.2f", change));
+            txtChangeAmount.setText(df.format(change));
         }
 
     }
 
     private void resetFields() {
         txtCustomerPhone.setText("");
-        txtVoucher.setText("");
         txtDiscount.setText("");
+        txtTotalAmount.setText("");
         txtCustomerAmount.setText("");
         txtChangeAmount.setText("");
         lblNumberProductValue.setText("0");
-        txtTotalAmount.setText("0.00");
+        txtFinalAmount.setText("");
     }
 
     private void xuatHoaDon() {
@@ -500,6 +507,7 @@ public class BanHangGUI extends JPanel {
         }
 
         double tongTien = Double.parseDouble(txtTotalAmount.getText().replace(",", ""));
+        double tienPhaiTra = Double.parseDouble(txtFinalAmount.getText().replace(",", ""));
         String tienKhachDuaStr = txtCustomerAmount.getText().replace(",", "");
 
         if (tienKhachDuaStr == null || tienKhachDuaStr.trim().isEmpty())
@@ -513,12 +521,12 @@ public class BanHangGUI extends JPanel {
             return;
         }
 
-        if (tienKhachDua < tongTien) {
+        if (tienKhachDua < tienPhaiTra) {
             JOptionPane.showMessageDialog(this, "Tiền khách đưa không đủ!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        double tienThoiLai = tienKhachDua - tongTien;
+        double tienThoiLai = tienKhachDua - tienPhaiTra;
 
         for (int i = 0; i < tableModel.getRowCount(); i++) {
             String maSP = tableModel.getValueAt(i, 0).toString();
@@ -574,13 +582,26 @@ public class BanHangGUI extends JPanel {
                 int soLuong = Integer.parseInt(tableModel.getValueAt(i, 2).toString());
                 double donGia = Double.parseDouble(tableModel.getValueAt(i, 3).toString());
                 double thanhTien = Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+
+                // Cắt tên sản phẩm nếu nó dài hơn 20 ký tự
+                String tenSPDisplay = tenSP;
+                if (tenSP.length() > 20) {
+                    tenSPDisplay = tenSP.substring(0, 17) + "...";
+                }
+
                 doc.insertString(doc.getLength(),
-                        String.format("%-20s %5d %,10.0f %,12.0f\n", tenSP, soLuong, donGia, thanhTien), normal);
+                        String.format("%-20s %5d %,10.0f %,12.0f\n", tenSPDisplay, soLuong, donGia, thanhTien), normal);
             }
 
-            DecimalFormat df = new DecimalFormat("#,###");
             doc.insertString(doc.getLength(), "-----------------------------------------------------\n", normal);
             doc.insertString(doc.getLength(), String.format("%-30s %19s\n", "Tổng tiền:", df.format(tongTien)),
+                    normal);
+            if (Double.parseDouble(txtDiscount.getText()) > 0) {
+                doc.insertString(doc.getLength(), String.format("%-30s %19s\n", "Chiết khấu:", df.format(
+                        Double.parseDouble(txtDiscount.getText().replace(",", "")))), normal);
+            }
+            doc.insertString(doc.getLength(), "-----------------------------------------------------\n", normal);
+            doc.insertString(doc.getLength(), String.format("%-30s %19s\n", "Khách phải trả:", df.format(tienPhaiTra)),
                     boldAmount);
             doc.insertString(doc.getLength(), String.format("%-30s %19s\n", "Tiền khách đưa:", df.format(tienKhachDua)),
                     boldAmount);
@@ -618,9 +639,25 @@ public class BanHangGUI extends JPanel {
         JOptionPane.showMessageDialog(this, panel, "Hóa đơn", JOptionPane.INFORMATION_MESSAGE);
 
         HoaDon hd = new HoaDon(new Date(), taiKhoanDangNhap.getNhanVien().getMaNV(),
-                taiKhoanDangNhap.getTenDangNhap(), tongTien);
+                taiKhoanDangNhap.getNhanVien().getTenNV(), tienPhaiTra);
         HoaDonDAO hoaDonDAO = new HoaDonDAO();
         int maHD = hoaDonDAO.themHoaDonVaLayMa(hd);
+        if (lichSuBanHangGUI != null)
+            lichSuBanHangGUI.refreshLichSuHoaDon();
+
+        // Làm mới danh sách sản phẩm sau khi bán hàng
+        if (quanLySanPhamGUI != null) {
+            quanLySanPhamGUI.refreshSanPhamList();
+        } else {
+            System.out.println("quanLySanPhamGUI is NULL!");
+        }
+
+        // Làm mới dữ liệu trên DashboardPanel
+        if (dashboardPanel != null) {
+            dashboardPanel.updateDashboardData();
+            dashboardPanel.updateChartData();
+            dashboardPanel.refresh();
+        }
 
         if (maHD > 0) {
             ChiTietHoaDonDAO ctDAO = new ChiTietHoaDonDAO();
@@ -637,7 +674,8 @@ public class BanHangGUI extends JPanel {
 
             tableModel.setRowCount(0);
             resetFields();
-            JOptionPane.showMessageDialog(this, "Thanh toán thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Thanh toán thành công!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "Lỗi khi lưu hóa đơn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }

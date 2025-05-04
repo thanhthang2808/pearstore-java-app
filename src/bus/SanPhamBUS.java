@@ -6,6 +6,8 @@ import entity.SanPham;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 public class SanPhamBUS {
     private SanPhamDAO sanPhamDAO;
 
@@ -35,32 +37,62 @@ public class SanPhamBUS {
 
     public boolean themSanPham(String maSP, String tenSP, BigDecimal giaBan, int soLuong, String maVach, String hinhAnh,
             BigDecimal giaNhap, String donViTinh, NganhHang nganhHang) {
-        if (maSP == null || maSP.trim().isEmpty()) {
-            return false; // Mã sản phẩm không được rỗng
-        }
-        if (tenSP == null || tenSP.trim().isEmpty()) {
-            return false; // Tên sản phẩm không được rỗng
-        }
-        if (giaBan == null || giaBan.compareTo(BigDecimal.ZERO) < 0 || soLuong < 0 || giaNhap == null
-                || giaNhap.compareTo(BigDecimal.ZERO) < 0) {
-            return false; // Giá bán, giá nhập không được âm và không được null
-        }
         SanPham sanPham = new SanPham(maSP, tenSP, giaBan, soLuong, maVach, hinhAnh, giaNhap, donViTinh, nganhHang);
+        if (sanPhamDAO.getSanPhamById(maSP) != null) {
+            JOptionPane.showMessageDialog(null, "Mã sản phẩm đã tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (sanPhamDAO.getSanPhamByMaVach(maVach) != null) {
+            JOptionPane.showMessageDialog(null, "Mã vạch đã tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
         return sanPhamDAO.themSanPham(sanPham);
     }
 
     public boolean capNhatSanPham(String maSP, String tenSP, BigDecimal giaBan, int soLuong, String maVach,
             String hinhAnh, BigDecimal giaNhap, String donViTinh, NganhHang nganhHang) {
+
         if (maSP == null || maSP.trim().isEmpty()) {
-            return false; // Mã sản phẩm không được rỗng
+            System.err.println("Lỗi: Mã sản phẩm không được để trống.");
+            return false;
+        }
+        if (!maSP.matches("^SP\\d+$")) {
+            System.err.println("Lỗi: Mã sản phẩm phải bắt đầu bằng 'SP' và theo sau là các chữ số.");
+            return false;
         }
         if (tenSP == null || tenSP.trim().isEmpty()) {
-            return false; // Tên sản phẩm không được rỗng
+            System.err.println("Lỗi: Tên sản phẩm không được để trống.");
+            return false;
         }
-        if (giaBan == null || giaBan.compareTo(BigDecimal.ZERO) < 0 || soLuong < 0 || giaNhap == null
-                || giaNhap.compareTo(BigDecimal.ZERO) < 0) {
-            return false; // Giá bán, giá nhập không được âm và không được null
+        if (!tenSP.matches("^[\\p{L}\\p{N}\\s]+$")) {
+            System.err.println("Lỗi: Tên sản phẩm phải là các chữ cái, chữ số hoặc khoảng trắng.");
+            return false;
         }
+        if (giaBan == null || giaBan.compareTo(BigDecimal.ZERO) < 0) {
+            System.err.println("Lỗi: Giá bán phải là số không âm.");
+            return false;
+        }
+        if (giaNhap == null || giaNhap.compareTo(BigDecimal.ZERO) < 0) {
+            System.err.println("Lỗi: Giá nhập phải là số không âm.");
+            return false;
+        }
+        if (soLuong < 0) {
+            System.err.println("Lỗi: Số lượng không được âm.");
+            return false;
+        }
+        if (maVach != null && !maVach.trim().isEmpty() && !maVach.matches("^\\d{13}$")) {
+            System.err.println("Lỗi: Mã vạch phải là dãy 13 chữ số.");
+            return false;
+        }
+        if (donViTinh == null || donViTinh.trim().isEmpty()) {
+            System.err.println("Lỗi: Đơn vị tính không được để trống.");
+            return false;
+        }
+        if (nganhHang == null) {
+            System.err.println("Lỗi: Ngành hàng không được để trống.");
+            return false;
+        }
+
         SanPham sanPham = new SanPham(maSP, tenSP, giaBan, soLuong, maVach, hinhAnh, giaNhap, donViTinh, nganhHang);
         return sanPhamDAO.capNhatSanPham(sanPham);
     }

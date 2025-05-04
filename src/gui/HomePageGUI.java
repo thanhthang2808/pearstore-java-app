@@ -26,7 +26,6 @@ public class HomePageGUI extends JFrame {
     private JPanel contentPanel;
     private CardLayout cardLayout;
     private BanHangGUI banHangGUI;
-    private QuanLySanPhamGUI quanLySanPhamGUI;
     private ChucVu chucVu;
 
     public HomePageGUI(TaiKhoan taiKhoan) {
@@ -97,19 +96,6 @@ public class HomePageGUI extends JFrame {
         JButton logoutButton = createMenuButton("Đăng xuất", "/icons/logout.png");
         logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        homeButton.addActionListener(e -> showPanel("Trang chủ"));
-        sellButton.addActionListener(e -> showPanel("Bán hàng"));
-        historyButton.addActionListener(e -> showPanel("Lịch sử bán hàng"));
-        productButton.addActionListener(e -> showPanel("Quản lý sản phẩm"));
-        employeeButton.addActionListener(e -> showPanel("Quản lý nhân viên"));
-        statisticButton.addActionListener(e -> showPanel("Báo cáo doanh thu"));
-        overviewButton.addActionListener(e -> showPanel("Thống kê"));
-        accountButton.addActionListener(e -> showPanel("Tài khoản"));
-        logoutButton.addActionListener(e -> {
-            new LoginGUI();
-            dispose();
-        });
-
         leftMenuPanel.add(homeButton);
         if (chucVu == ChucVu.NHAN_VIEN) {
             leftMenuPanel.add(sellButton);
@@ -135,16 +121,16 @@ public class HomePageGUI extends JFrame {
         contentPanel.setBackground(secondaryColor);
         contentPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        DashboardPanel dashboardPanel = new DashboardPanel();
+        DashboardPanel dashboardPanel = new DashboardPanel(taiKhoanDangNhap);
         contentPanel.add(dashboardPanel, "Trang chủ");
+        LichSuBanHangGUI lichSuBanHangGUI = new LichSuBanHangGUI();
+        QuanLySanPhamGUI quanLySanPhamGUI = new QuanLySanPhamGUI();
 
-        banHangGUI = new BanHangGUI(taiKhoanDangNhap);
+        banHangGUI = new BanHangGUI(taiKhoanDangNhap, lichSuBanHangGUI, quanLySanPhamGUI, dashboardPanel);
         contentPanel.add(banHangGUI, "Bán hàng");
 
-        LichSuBanHangGUI lichSuBanHangGUI = new LichSuBanHangGUI();
         contentPanel.add(lichSuBanHangGUI, "Lịch sử bán hàng");
 
-        quanLySanPhamGUI = new QuanLySanPhamGUI();
         contentPanel.add(quanLySanPhamGUI, "Quản lý sản phẩm");
 
         QuanLyNhanVienGUI quanLyNhanVienGUI = new QuanLyNhanVienGUI();
@@ -159,6 +145,19 @@ public class HomePageGUI extends JFrame {
         contentPanel.add(createTaiKhoanPanel(taiKhoanDangNhap), "Tài khoản");
 
         mainPanel.add(contentPanel, BorderLayout.CENTER);
+
+        homeButton.addActionListener(e -> showPanel("Trang chủ"));
+        sellButton.addActionListener(e -> showPanel("Bán hàng"));
+        historyButton.addActionListener(e -> showPanel("Lịch sử bán hàng"));
+        productButton.addActionListener(e -> showPanel("Quản lý sản phẩm"));
+        employeeButton.addActionListener(e -> showPanel("Quản lý nhân viên"));
+        statisticButton.addActionListener(e -> showPanel("Báo cáo doanh thu"));
+        overviewButton.addActionListener(e -> showPanel("Thống kê"));
+        accountButton.addActionListener(e -> showPanel("Tài khoản"));
+        logoutButton.addActionListener(e -> {
+            new LoginGUI();
+            dispose();
+        });
 
         add(mainPanel);
         setVisible(true);

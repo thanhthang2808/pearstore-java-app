@@ -4,6 +4,7 @@ import dao.ChiTietHoaDonDAO;
 import dao.HoaDonDAO;
 import dao.SanPhamDAO;
 import entity.ChiTietHoaDon;
+import entity.ChucVu;
 import entity.HoaDon;
 import entity.SanPham;
 import entity.TaiKhoan;
@@ -30,8 +31,10 @@ public class DashboardPanel extends JPanel {
     private HoaDonDAO hoaDonDAO;
     private ChiTietHoaDonDAO chiTietHoaDonDAO;
     private SanPhamDAO sanPhamDAO;
+    private TaiKhoan taiKhoanDangNhap;
 
-    public DashboardPanel() {
+    public DashboardPanel(TaiKhoan taiKhoan) {
+        this.taiKhoanDangNhap = taiKhoan;
         // Khởi tạo các DAO
         hoaDonDAO = new HoaDonDAO();
         chiTietHoaDonDAO = new ChiTietHoaDonDAO();
@@ -223,7 +226,9 @@ public class DashboardPanel extends JPanel {
         // Xử lý sự kiện khi nhấn nút
         btnThongKeChiTiet.addActionListener(e -> navigateToThongKeGUI());
 
-        decorationPanel.add(btnThongKeChiTiet);
+        if (taiKhoanDangNhap.getNhanVien().getChucVu() == ChucVu.QUAN_LY) {
+            decorationPanel.add(btnThongKeChiTiet);
+        }
 
         return decorationPanel;
     }
@@ -312,6 +317,17 @@ public class DashboardPanel extends JPanel {
         }
     }
 
+    public void updateChartData() {
+        JFreeChart barChart = createRevenueChart("Doanh thu theo tuần");
+        ChartPanel chart = new ChartPanel(barChart);
+        chart.setPreferredSize(new Dimension(600, 300));
+        JPanel chartPanel = (JPanel) getComponent(0);
+        chartPanel.removeAll();
+        chartPanel.add(chart, BorderLayout.CENTER);
+        chartPanel.revalidate();
+        chartPanel.repaint();
+    }
+
     public void updateDashboardData() {
         try {
             System.out.println("Cập nhật DashboardPanel");
@@ -335,5 +351,12 @@ public class DashboardPanel extends JPanel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void refresh() {
+        updateDashboardData();
+        updateChartData();
+        updateTopProductsThisWeek(
+                (JTextArea) ((JScrollPane) ((JPanel) getComponent(1)).getComponent(6)).getViewport().getView());
     }
 }
