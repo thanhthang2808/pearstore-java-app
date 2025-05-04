@@ -332,20 +332,16 @@ public class DashboardPanel extends JPanel {
         try {
             System.out.println("Cập nhật DashboardPanel");
 
-            // Lấy ngày hiện tại
             LocalDate today = LocalDate.now();
             String todayFormatted = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-            // Lấy tổng doanh thu hôm nay
             double dailyRevenue = hoaDonDAO.tinhTongDoanhThu(todayFormatted + " 00:00:00",
                     todayFormatted + " 23:59:59");
             System.out.println("Doanh thu hôm nay: " + dailyRevenue);
 
-            // Lấy số lượng hóa đơn hôm nay
             int dailyOrders = hoaDonDAO.demSoHoaDon(todayFormatted + " 00:00:00", todayFormatted + " 23:59:59");
             System.out.println("Số hóa đơn hôm nay: " + dailyOrders);
 
-            // Cập nhật giao diện
             lblRevenueToday.setText(currencyFormat.format(dailyRevenue));
             lblOrdersToday.setText(dailyOrders + " đơn");
         } catch (Exception e) {

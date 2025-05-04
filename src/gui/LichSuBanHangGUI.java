@@ -6,14 +6,22 @@ import entity.HoaDon;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LichSuBanHangGUI extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
+    private JTextField txtTimKiem;
+    private JButton btnTimKiem;
+    private HoaDonDAO hoaDonDAO = new HoaDonDAO();
+    private List<HoaDon> danhSachHoaDon;
 
-    // Tạo màu
     private final Color primaryColor = new Color(52, 152, 219);
     private final Color secondaryColor = new Color(236, 240, 241);
     private final Color tableHeaderColor = new Color(41, 128, 185);
@@ -21,37 +29,70 @@ public class LichSuBanHangGUI extends JPanel {
 
     public LichSuBanHangGUI() {
         setLayout(new BorderLayout());
-        setBackground(secondaryColor); // Đặt màu nền
+        setBackground(secondaryColor);
 
-        // Thiết lập tiêu đề
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        headerPanel.setBackground(secondaryColor);
+
         JLabel title = new JLabel("Lịch sử bán hàng", JLabel.CENTER);
         title.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        title.setForeground(primaryColor); // Đặt màu chữ
-        add(title, BorderLayout.NORTH);
+        title.setForeground(primaryColor);
+        headerPanel.add(title);
 
-        // Thiết lập bảng
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+        searchPanel.setBackground(secondaryColor);
+
+        txtTimKiem = new JTextField(10);
+        txtTimKiem.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        searchPanel.add(txtTimKiem);
+
+        btnTimKiem = new JButton("Tìm");
+        btnTimKiem.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        btnTimKiem.setBackground(primaryColor);
+        btnTimKiem.setForeground(Color.WHITE);
+        btnTimKiem.setFocusPainted(false);
+        btnTimKiem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timKiemHoaDon();
+            }
+        });
+        searchPanel.add(btnTimKiem);
+
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(secondaryColor);
+        topPanel.add(headerPanel, BorderLayout.CENTER);
+        topPanel.add(searchPanel, BorderLayout.EAST);
+
+        add(topPanel, BorderLayout.NORTH);
+
         tableModel = new DefaultTableModel(new String[] { "Mã HĐ", "Ngày lập", "Nhân viên", "Tổng tiền" }, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Không cho phép chỉnh sửa bất kỳ ô nào
+                return false;
             }
         };
         table = new JTable(tableModel);
 
-        // Tùy chỉnh bảng
         customizeTable();
 
-        // Thêm bảng vào giao diện
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Tải dữ liệu
         loadLichSuHoaDon();
 
-        // Xử lý sự kiện click chuột
+        txtTimKiem.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    timKiemHoaDon();
+                }
+            }
+        });
+
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (e.getClickCount() == 2) { // Double-click
+                if (e.getClickCount() == 2) {
                     int selectedRow = table.getSelectedRow();
                     if (selectedRow != -1) {
                         int maHD = (int) tableModel.getValueAt(selectedRow, 0);
@@ -63,35 +104,55 @@ public class LichSuBanHangGUI extends JPanel {
     }
 
     private void customizeTable() {
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 16)); // Tăng kích thước chữ trong bảng
-        table.setRowHeight(30); // Tăng chiều cao hàng
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 18)); // Tăng kích thước chữ tiêu đề cột
-        table.getTableHeader().setBackground(tableHeaderColor); // màu tiêu đề cột
-        table.getTableHeader().setForeground(tableHeaderTextColor); // màu chữ tiêu đề cột
-        table.setGridColor(new Color(189, 195, 199)); // Màu đường viền
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        table.setRowHeight(30);
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 18));
+        table.getTableHeader().setBackground(tableHeaderColor);
+        table.getTableHeader().setForeground(tableHeaderTextColor);
+        table.setGridColor(new Color(189, 195, 199));
     }
 
     public void loadLichSuHoaDon() {
         System.out.println("Loading data in LichSuBanHangGUI...");
-        HoaDonDAO hoaDonDAO = new HoaDonDAO();
-        List<HoaDon> list = hoaDonDAO.getAllHoaDon();
-
-        if (list.isEmpty()) {
+        danhSachHoaDon = hoaDonDAO.getAllHoaDon();
+        if (danhSachHoaDon.isEmpty()) {
             System.out.println("No data found in HoaDonDAO.getAllHoaDon()");
         } else {
-            System.out.println("Data loaded: " + list.size() + " records");
+            System.out.println("Data loaded: " + danhSachHoaDon.size() + " records");
         }
+        hienThiDanhSachHoaDon(danhSachHoaDon);
+    }
 
-        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+    private void hienThiDanhSachHoaDon(List<HoaDon> danhSach) {
+        tableModel.setRowCount(0);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-        for (HoaDon hd : list) {
+        for (HoaDon hd : danhSach) {
             tableModel.addRow(new Object[] {
                     hd.getMaHD(),
                     sdf.format(hd.getNgayLap()),
                     hd.getTenNhanVien(),
                     String.format("%,.0f", hd.getTongTien()) + " VNĐ"
             });
+        }
+    }
+
+    private void timKiemHoaDon() {
+        String tuKhoa = txtTimKiem.getText().trim();
+        if (tuKhoa.isEmpty()) {
+            hienThiDanhSachHoaDon(danhSachHoaDon);
+        } else {
+            try {
+                int maHDTimKiem = Integer.parseInt(tuKhoa);
+                List<HoaDon> ketQuaTimKiem = danhSachHoaDon.stream()
+                        .filter(hd -> hd.getMaHD() == maHDTimKiem)
+                        .collect(Collectors.toList());
+                hienThiDanhSachHoaDon(ketQuaTimKiem);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập mã hóa đơn là một số nguyên!", "Lỗi tìm kiếm",
+                        JOptionPane.ERROR_MESSAGE);
+                hienThiDanhSachHoaDon(danhSachHoaDon);
+            }
         }
     }
 
