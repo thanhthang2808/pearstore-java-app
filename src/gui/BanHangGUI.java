@@ -22,6 +22,7 @@ import javax.swing.text.StyledDocument;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -48,7 +49,6 @@ public class BanHangGUI extends JPanel {
     private DefaultTableModel tableModel;
     private JTextField txtTotalAmount, txtDiscount, txtCustomerAmount, txtChangeAmount, txtFinalAmount,
             txtCustomerPhone;
-    private DecimalFormat df = new DecimalFormat("#,###");
 
     public BanHangGUI(TaiKhoan taiKhoan, LichSuBanHangGUI l, QuanLySanPhamGUI qlSanPhamGUI,
             DashboardPanel dashboardPanel) {
@@ -376,6 +376,13 @@ public class BanHangGUI extends JPanel {
         updateTabStyles();
     }
 
+    public static String numberFormatter(double number) {
+        DecimalFormat df = (DecimalFormat) DecimalFormat.getNumberInstance(Locale.US);
+        df.applyPattern("#,###");
+
+        return df.format(number);
+    }
+
     private void updateTabStyles() {
         for (Component comp : tabContainer.getComponents()) {
             if (comp instanceof JPanel) { // Kiểm tra nếu là JPanel
@@ -462,7 +469,7 @@ public class BanHangGUI extends JPanel {
 
         lblNumberProductValue.setText(String.valueOf(numberProduct)); // Cập nhật số lượng sản phẩm
 
-        txtTotalAmount.setText(df.format(total));
+        txtTotalAmount.setText(numberFormatter(total));
 
         double discount = 0;
         try {
@@ -472,7 +479,7 @@ public class BanHangGUI extends JPanel {
             txtDiscount.setText("0");
         }
         double finalTotal = total - discount;
-        txtFinalAmount.setText(df.format(finalTotal));
+        txtFinalAmount.setText(numberFormatter(finalTotal));
 
         double customerAmount = 0;
         try {
@@ -484,7 +491,7 @@ public class BanHangGUI extends JPanel {
             txtChangeAmount.setText("0");
         } else {
             double change = customerAmount - finalTotal;
-            txtChangeAmount.setText(df.format(change));
+            txtChangeAmount.setText(numberFormatter(change));
         }
 
     }
@@ -594,18 +601,22 @@ public class BanHangGUI extends JPanel {
             }
 
             doc.insertString(doc.getLength(), "-----------------------------------------------------\n", normal);
-            doc.insertString(doc.getLength(), String.format("%-30s %19s\n", "Tổng tiền:", df.format(tongTien)),
+            doc.insertString(doc.getLength(),
+                    String.format("%-30s %19s\n", "Tổng tiền:", numberFormatter(tongTien)),
                     normal);
             if (Double.parseDouble(txtDiscount.getText()) > 0) {
-                doc.insertString(doc.getLength(), String.format("%-30s %19s\n", "Chiết khấu:", df.format(
+                doc.insertString(doc.getLength(), String.format("%-30s %19s\n", "Chiết khấu:", numberFormatter(
                         Double.parseDouble(txtDiscount.getText().replace(",", "")))), normal);
             }
             doc.insertString(doc.getLength(), "-----------------------------------------------------\n", normal);
-            doc.insertString(doc.getLength(), String.format("%-30s %19s\n", "Khách phải trả:", df.format(tienPhaiTra)),
+            doc.insertString(doc.getLength(),
+                    String.format("%-30s %19s\n", "Khách phải trả:", numberFormatter(tienPhaiTra)),
                     boldAmount);
-            doc.insertString(doc.getLength(), String.format("%-30s %19s\n", "Tiền khách đưa:", df.format(tienKhachDua)),
+            doc.insertString(doc.getLength(),
+                    String.format("%-30s %19s\n", "Tiền khách đưa:", numberFormatter(tienKhachDua)),
                     boldAmount);
-            doc.insertString(doc.getLength(), String.format("%-30s %19s\n", "Tiền thối lại:", df.format(tienThoiLai)),
+            doc.insertString(doc.getLength(),
+                    String.format("%-30s %19s\n", "Tiền thối lại:", numberFormatter(tienThoiLai)),
                     boldAmount);
             doc.insertString(doc.getLength(), "======================================================", normal);
             doc.insertString(doc.getLength(), "\n", normal);
